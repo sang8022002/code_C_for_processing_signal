@@ -55,7 +55,11 @@ void moving_median(const float *arr, int arr_len, int k, float *result) {
         }
     }
 }
-
+/*Tim cac dinh trong mang data*/
+void findpeaks(float *arr, int *index)
+{
+    
+}
 int main() {
     // Dữ liệu PPG
     // float ppg_data[] = { ... };  // Thay thế [...] bằng dữ liệu PPG của bạn
