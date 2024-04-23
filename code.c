@@ -100,6 +100,46 @@ void findpeaks(float *arr, int *index, int *number_peak, int prominence )
         }
     }
 }
+void findTwoLargest(float* arr, int* peak, int* s1, int* s2, int window)
+{
+    int max1, max2;
+    // int max1_index, max2_index;
+    int size_arr = sizeof(arr)/size(arr[0]);
+    // Nếu mảng có ít hơn hai phần tử, không thể tìm được hai giá trị lớn nhất và lớn thứ hai
+    if (size_arr < 2) {
+        printf("Mang co it hon hai phan tu.\n");
+        return;
+    }
+    // max1_index = max2_index = 0;
+    *s1=0;
+    *s2=0;
+    // Tìm vị trí của hai giá trị lớn nhất và lớn thứ hai trong mảng
+    int size_peak = (sizeof(peak)/(sizeof(peak[0])));
+    for(int i = 0; i < size_peak; ++i)
+    {
+        for(int j = peak[i]-window; j < peak[i]+ window; ++j)
+        {
+            max1 = max2 = arr[j];
+            if(arr[j] > max1)
+            {
+                max2 = max1;
+                s2[i] = s1[i];
+                max1 = arr[j];
+                s1[i] = j; 
+            }
+            else if(arr[j] > max2)
+            {
+                s2[i] = i;
+                max2= arr[j];
+            }
+        }
+    } 
+    // In ra vị trí của hai giá trị lớn nhất và lớn thứ hai
+    for(int i = 0; i < size_peak; ++i )
+    {
+        printf("Vi tri cua hai gia tri lon nhat lan luot la: %d va %d\n", s1[i], s2[i]);
+    }
+}
 int main() {
     int ppg_data[1200];
     int size = (sizeof(ppg_data)/4);
