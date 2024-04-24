@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void moving_mean(const int *arr, int arr_len, int k, float *result) {
+void moving_mean(const int *arr, int arr_len, int k, int *result) {
     for (int i = 0; i <= arr_len - 1; ++i) 
     {
         // int window = k;
@@ -11,7 +11,7 @@ void moving_mean(const int *arr, int arr_len, int k, float *result) {
                 sum += arr[j];
             }
             //printf("gia tri K = %d\n", k);
-            result[i] = (float)(sum / k);
+            result[i] = (int)(sum / k);
             //printf("mean data trong ham moving_mean[%d] = %.2f\n",i, result[i]);
         }
         else 
@@ -55,7 +55,7 @@ void moving_median(const float *arr, int arr_len, int k, float *result) {
     }
 }
 /*Tim cac dinh trong mang data*/
-void findpeaks(float *arr, int *index, int *number_peak, int prominence )
+void findpeaks(int *arr, int *index, int *number_peak, int prominence )
 {
     *number_peak = 0;
     int j = 0;
@@ -65,14 +65,15 @@ void findpeaks(float *arr, int *index, int *number_peak, int prominence )
         {
             if(arr[i] > arr[i-1] && arr[i] > arr[i+1])
             {
+                
                 if( ((arr[i] - arr[i-30]) > prominence) && ( (arr[i]-arr[i+30]) > prominence) )
                 {
                     index[j] = i;
                     *number_peak = *number_peak + 1;
-                    printf("Dinh ơ vị tri = %d\n", i);
-                    printf("arr[%d] = %.2f\n", i, arr[i]);
-                    printf("arr[%d] = %.2f\n", i-1, arr[i-1]);
-                    printf("arr[%d] = %.2f\n", i+1, arr[i+1]);
+                    printf("Dinh ơ vị tri = %d\n", index[j]);
+                    printf("arr[%d] = %d\n", i, arr[i]);
+                    printf("arr[%d] = %d\n", i-1, arr[i-1]);
+                    printf("arr[%d] = %d\n", i+1, arr[i+1]);
                     j++;
                 }
             }
@@ -103,41 +104,67 @@ void findpeaks(float *arr, int *index, int *number_peak, int prominence )
         }
     }
 }
-void findTwoLargest(int* arr,int size_arr,int number_peak, int* peak, int* s1, int* s2, int window)
+void findTwoLargest(int* arr,int size_arr,int* peak_pcg, int number_peak_pcg, int number_peak, int* peak, int* s1, int* s2, int window)
 {
     int max1, max2;
     printf("so phan tu cua mang la : %d\n", size_arr);
     // Nếu mảng có ít hơn hai phần tử, không thể tìm được hai giá trị lớn nhất và lớn thứ hai
-    if (size_arr < 2) {
+    if (size_arr < 2) 
+    {
         printf("Mang co it hon hai phan tu.\n");
         return;
     }
-    // Tìm vị trí của hai giá trị lớn nhất và lớn thứ hai trong mảng
-    //int size_peak = (sizeof(peak)/(sizeof(peak[0])));
     for(int i = 0; i < number_peak; ++i)
     {
-        printf("peak[%d] = %d\n", i, peak[i]);
-        for(int j = peak[i]-window; j < peak[i]+ window; ++j)
+        printf("Tai dinh ppg thu %d\n", i+1);
+        max1 = 0;
+        max2 = 0;
+        for(int j = 0; j < number_peak_pcg; ++j)
         {
-            max1 = max2 = arr[j];
-            if(arr[j] > max1)
+            if( (peak_pcg[j] > peak[i]- window) && (peak_pcg[j] < peak[i] + window))
             {
-                max2 = max1;
-                s2[i] = s1[i];
-                max1 = arr[j];
-                s1[i] = j;
-            }
-            else if(arr[j] > max2)
-            {
-                s2[i] = i;
-                max2= arr[j];
+                printf(" kiem tra cua so tai dinh %d cua so chay den co pcg[%d] = %d\n", peak[i], peak_pcg[j], arr[peak_pcg[j]]);
+                if(arr[peak_pcg[j]] > max1)
+                {
+                    max2 = max1;
+                    max1 = arr[peak_pcg[j]];
+                    s2[i] = s1[i];
+                    s1[i] = peak_pcg[j];
+                    //printf("co chayj vaof ddaay khoong\n");
+                }
+                else if(arr[peak_pcg[j]] > max2)
+                {
+                    s2[i] = peak_pcg[j];
+                    max2= arr[peak_pcg[j]];
+                }   
             }
         }
+        // printf("peak[%d] = %d\n", i, peak[i]);
+        // //printf("dinh thu%d\n", peak[i]);
+        // max1 = max2 = arr[peak[i]-window];
+        // for(int j = peak[i]-window; j < peak[i]+ window; ++j)
+        // {
+        //     //printf("voi đỉnh thứ %d cac giá trị la %d\n", i, arr[j]);
+            
+        //     if(arr[j] > max1)
+        //     {
+        //         max2 = max1;
+        //         max1 = arr[j];
+        //         s2[i] = s1[i];
+        //         s1[i] = j;
+        //         //printf("co chayj vaof ddaay khoong\n");
+        //     }
+        //     else if(arr[j] > max2)
+        //     {
+        //         s2[i] = i;
+        //         max2= arr[j];
+        //     }
+        // }
     } 
     // In ra vị trí của hai giá trị lớn nhất và lớn thứ hai
     for(int i = 0; i < number_peak; ++i )
     {
-        printf("Vi tri cua hai gia tri lon nhat lan luot la: %d va %d\n", s1[i], s2[i]);
+        printf("Vi tri cua hai gia tri lon nhat gan PPG thu %d lan luot la: %d va %d\n", i, s1[i], s2[i]);
     }
 }
 
@@ -153,22 +180,13 @@ int main() {
         printf("Không thể mở tệp.\n");
         return 1; // Trả về 1 để báo lỗi
     }
-    // for (int i = 0; i < size; i++) {
-    //     fprintf(file, "%d\n", ppg_data[i]);  // Ghi mỗi phần tử trên một dòng
-    //     printf("PPG[%d] vừa doc duoc nè = %d\n",i, ppg_data[i]);
-    // }
     for(int i = 0; i < size; ++i) 
     {
         fscanf(file, "%d", &ppg_data[i]);
-        // printf("Số đọc được từ tệp: %d\n",ppg_data[i]);
-        // printf("xin chao nhoc\n");
     }
     // Đóng tệp sau khi hoàn thành
     fclose(file);
-    // for (int i = 0; i < size; i++) {
-    //     printf("PPG[%d] vừa doc duoc nè = %d\n",i, ppg_data[i]);  // Ghi mỗi phần tử trên một dòng
-    // }
-    float mean_data[size];// khai bao mang mean_data voi kich thuoc size
+    int mean_data[size];// khai bao mang mean_data voi kich thuoc size
     moving_mean(ppg_data, size, windowsize, mean_data);
 
     /*@brief ghi mean_data vao file mean_data
@@ -182,7 +200,7 @@ int main() {
     int size1 = (sizeof(mean_data)/4);
     // Lưu mảng vào tệp văn bản
     for (int i = 0; i < size; i++) {
-        fprintf(file, "%.2f\n", mean_data[i]);  // Ghi mỗi phần tử trên một dòng
+        fprintf(file, "%d\n", mean_data[i]);  // Ghi mỗi phần tử trên một dòng
     }
     // Đóng tệp
     fclose(file);
@@ -198,10 +216,6 @@ int main() {
     }
     // Đọc và in giá trị từng số nguyên trong tệp
     int i =0;
-    // for (int i = 0; i < size; i++) {
-    //     fprintf(file, "%d\n", pcg_data[i]);  // Ghi mỗi phần tử trên một dòng
-    //     // printf("ppg_data lưu file[%d] = %d\n", i, ppg_data[i]);
-    // }
     for(int i = 0; i < size; ++i) 
     {
         fscanf(file, "%d\n", &pcg_data[i]);
@@ -217,9 +231,14 @@ int main() {
     {
         printf("dinh thu [%d] la %d\n", i, index_peaks[i]);
     }
+    int index_peaks_pcg[200];
+    int number_peaks_pcg = 2;
+    findpeaks(pcg_data, index_peaks_pcg, &number_peaks_pcg, 0);
+    printf("number pcg peaks = %d\n", number_peaks_pcg);
+
     printf("number_peaks = %d\n", number_peaks);
     int s1[20];
     int s2[20];
-    findTwoLargest(pcg_data,size, number_peaks, index_peaks,s1,s2,150);
+    findTwoLargest(pcg_data, size, index_peaks_pcg, number_peaks_pcg, number_peaks, index_peaks, s1, s2, 150);
     return 0;
 }
