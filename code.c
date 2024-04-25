@@ -144,10 +144,28 @@ void findTwoLargest(int* arr,int size_arr,int* peak_pcg, int number_peak_pcg, in
 
 int main() {
     int size = 1100;
-    int ppg_data[size];
     int windowsize = 10;
+
+    int ppg_data[size];
+    int pcg_data[size];
+
+    // int arr[size];
+    int index_peaks_ppg[5];
+    int index_peaks_pcg[200];
+
+    int number_peaks_ppg = 2;
+    int number_peaks_pcg = 2;
+
+    int prominence = 10000;
+ 
+    int s1[20];
+    int s2[20];
+
+    int mean_data[size];// khai bao mang mean_data voi kich thuoc size
+    //int number; 
+
+    /*To open file ppg to load data  to ppg_data[i]*/
     FILE *file;
-    int number; 
     file = fopen("ppg_sd.txt", "r");// open file to
     // Kiểm tra xem tệp có tồn tại không
     if (file == NULL) {
@@ -158,14 +176,11 @@ int main() {
     {
         fscanf(file, "%d", &ppg_data[i]);
     }
-    // Đóng tệp sau khi hoàn thành
-    fclose(file);
-    int mean_data[size];// khai bao mang mean_data voi kich thuoc size
+    fclose(file);    // Đóng tệp sau khi hoàn thành
+
+    /*To average the ppg data with sliding window*/
     moving_mean(ppg_data, size, windowsize, mean_data);
 
-    /*@brief ghi mean_data vao file mean_data
-    *
-    */
     FILE *file1 = fopen("mean_data.txt", "w");
     if (file1 == NULL) {
         printf("Không thể mở tệp để ghi.\n");
@@ -176,15 +191,12 @@ int main() {
     for (int i = 0; i < size; i++) {
         fprintf(file, "%d\n", mean_data[i]);  // Ghi mỗi phần tử trên một dòng
     }
-    // Đóng tệp
-    fclose(file);
-    ////////////////////////////////////////////////////////////////////////////////////////
-    int arr[size];
-    // Mở tệp để ghi
-    int pcg_data[size];
+    fclose(file);    // Đóng tệp
+    
+    /*Open file pcg to load data into pcg_data[i]*/
     file = fopen("pcg_sd.txt", "r");
-    // Kiểm tra xem tệp có tồn tại không
-    if (file == NULL) {
+
+    if (file == NULL) {                         // Kiểm tra xem tệp có tồn tại không
         printf("Không thể mở tệp.\n");
         return 1; // Trả về 1 để báo lỗi
     }
@@ -195,24 +207,21 @@ int main() {
         fscanf(file, "%d\n", &pcg_data[i]);
         //printf("Số đọc được từ tệp: %d\n",pcg_data[i]);
     }
-    // Đóng tệp sau khi hoàn thành
-    fclose(file);
-    int index_peaks_ppg[5];
-    int number_peaks = 2;
-    int prominence = 10000;
-    findpeaks(mean_data, size, index_peaks_ppg, &number_peaks, prominence);
-    for(int i = 0; i < number_peaks; ++i)
+    fclose(file);// Đóng tệp sau khi hoàn thành
+
+    /*find peaks with mean_data(data after push ppg_data through mean_data function)*/
+    findpeaks(mean_data, size, index_peaks_ppg, &number_peaks_ppg, prominence);
+    for(int i = 0; i < number_peaks_ppg; ++i)
     {
         printf("dinh thu [%d] la %d\n", i, index_peaks_ppg[i]);
     }
-    int index_peaks_pcg[200];
-    int number_peaks_pcg = 2;
+    
+    /*find peaks into pcg_data*/
     findpeaks(pcg_data, size, index_peaks_pcg, &number_peaks_pcg, 0);
-    printf("number pcg peaks = %d\n", number_peaks_pcg);
 
-    printf("number_peaks = %d\n", number_peaks);
-    int s1[20];
-    int s2[20];
-    findTwoLargest(pcg_data, size, index_peaks_pcg, number_peaks_pcg, number_peaks, index_peaks_ppg, s1, s2, 150);
+    printf("number pcg peaks = %d\n", number_peaks_pcg); //
+    printf("number ppg peaks = %d\n", number_peaks_ppg);
+    
+    findTwoLargest(pcg_data, size, index_peaks_pcg, number_peaks_pcg, number_peaks_ppg, index_peaks_ppg, s1, s2, 150);
     return 0;
 }
