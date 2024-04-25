@@ -139,27 +139,6 @@ void findTwoLargest(int* arr,int size_arr,int* peak_pcg, int number_peak_pcg, in
                 }   
             }
         }
-        // printf("peak[%d] = %d\n", i, peak[i]);
-        // //printf("dinh thu%d\n", peak[i]);
-        // max1 = max2 = arr[peak[i]-window];
-        // for(int j = peak[i]-window; j < peak[i]+ window; ++j)
-        // {
-        //     //printf("voi đỉnh thứ %d cac giá trị la %d\n", i, arr[j]);
-            
-        //     if(arr[j] > max1)
-        //     {
-        //         max2 = max1;
-        //         max1 = arr[j];
-        //         s2[i] = s1[i];
-        //         s1[i] = j;
-        //         //printf("co chayj vaof ddaay khoong\n");
-        //     }
-        //     else if(arr[j] > max2)
-        //     {
-        //         s2[i] = i;
-        //         max2= arr[j];
-        //     }
-        // }
     } 
     // In ra vị trí của hai giá trị lớn nhất và lớn thứ hai
     for(int i = 0; i < number_peak; ++i )
