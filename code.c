@@ -55,13 +55,13 @@ void moving_median(const float *arr, int arr_len, int k, float *result) {
     }
 }
 /*Tim cac dinh trong mang data*/
-void findpeaks(int *arr, int *index, int *number_peak, int prominence )
+void findpeaks(int *arr,int size, int *index, int *number_peak, int prominence )
 {
     *number_peak = 0;
     int j = 0;
-    for(int i = 1; i < 1000 ; ++i )
+    for(int i = 1; i < size ; ++i )
     {
-        if( i > 30-1 && i < 1000-30-1)
+        if( i > 30-1 && i < size-30-1)
         {
             if(arr[i] > arr[i-1] && arr[i] > arr[i+1])
             {
@@ -90,11 +90,12 @@ void findpeaks(int *arr, int *index, int *number_peak, int prominence )
                 }
             }
         }
-        else if(i > 1000-30)
+        else if(i > size-30)
         {
             if(arr[i] > arr[i-1] && arr[i] > arr[i+1])
             {
-                if( (arr[i] - arr[i - 30]) > prominence && ( (arr[i]-arr[1000]> prominence ) ))
+                printf("có chạy vao doạn cuối\n");
+                if( (arr[i] - arr[i - 30]) > prominence && ( (arr[i]-arr[size- 1]> prominence ) ))
                 {
                     index[j] = i;
                     *number_peak = *number_peak + 1;
@@ -104,26 +105,20 @@ void findpeaks(int *arr, int *index, int *number_peak, int prominence )
         }
     }
 }
-void findTwoLargest(int* arr,int size_arr,int* peak_pcg, int number_peak_pcg, int number_peak, int* peak, int* s1, int* s2, int window)
+void findTwoLargest(int* arr,int size_arr,int* peak_pcg, int number_peak_pcg, int number_peak_ppg, int* peak_ppg, int* s1, int* s2, int window)
 {
     int max1, max2;
     printf("so phan tu cua mang la : %d\n", size_arr);
-    // Nếu mảng có ít hơn hai phần tử, không thể tìm được hai giá trị lớn nhất và lớn thứ hai
-    if (size_arr < 2) 
-    {
-        printf("Mang co it hon hai phan tu.\n");
-        return;
-    }
-    for(int i = 0; i < number_peak; ++i)
+    for(int i = 0; i < number_peak_ppg; ++i)
     {
         printf("Tai dinh ppg thu %d\n", i+1);
         max1 = 0;
         max2 = 0;
         for(int j = 0; j < number_peak_pcg; ++j)
         {
-            if( (peak_pcg[j] > peak[i]- window) && (peak_pcg[j] < peak[i] + window))
+            if( (peak_pcg[j] > peak_ppg[i]- window) && (peak_pcg[j] < peak_ppg[i] + window))
             {
-                printf(" kiem tra cua so tai dinh %d cua so chay den co pcg[%d] = %d\n", peak[i], peak_pcg[j], arr[peak_pcg[j]]);
+                printf(" kiem tra cua so tai dinh ppg[%d] cua so chay den co pcg[%d] = %d\n", peak_ppg[i], peak_pcg[j], arr[peak_pcg[j]]);
                 if(arr[peak_pcg[j]] > max1)
                 {
                     max2 = max1;
@@ -141,7 +136,7 @@ void findTwoLargest(int* arr,int size_arr,int* peak_pcg, int number_peak_pcg, in
         }
     } 
     // In ra vị trí của hai giá trị lớn nhất và lớn thứ hai
-    for(int i = 0; i < number_peak; ++i )
+    for(int i = 0; i < number_peak_ppg; ++i )
     {
         printf("Vi tri cua hai gia tri lon nhat gan PPG thu %d lan luot la: %d va %d\n", i, s1[i], s2[i]);
     }
@@ -202,22 +197,22 @@ int main() {
     }
     // Đóng tệp sau khi hoàn thành
     fclose(file);
-    int index_peaks[5];
+    int index_peaks_ppg[5];
     int number_peaks = 2;
     int prominence = 10000;
-    findpeaks(mean_data, index_peaks, &number_peaks, prominence);
+    findpeaks(mean_data, size, index_peaks_ppg, &number_peaks, prominence);
     for(int i = 0; i < number_peaks; ++i)
     {
-        printf("dinh thu [%d] la %d\n", i, index_peaks[i]);
+        printf("dinh thu [%d] la %d\n", i, index_peaks_ppg[i]);
     }
     int index_peaks_pcg[200];
     int number_peaks_pcg = 2;
-    findpeaks(pcg_data, index_peaks_pcg, &number_peaks_pcg, 0);
+    findpeaks(pcg_data, size, index_peaks_pcg, &number_peaks_pcg, 0);
     printf("number pcg peaks = %d\n", number_peaks_pcg);
 
     printf("number_peaks = %d\n", number_peaks);
     int s1[20];
     int s2[20];
-    findTwoLargest(pcg_data, size, index_peaks_pcg, number_peaks_pcg, number_peaks, index_peaks, s1, s2, 150);
+    findTwoLargest(pcg_data, size, index_peaks_pcg, number_peaks_pcg, number_peaks, index_peaks_ppg, s1, s2, 150);
     return 0;
 }
